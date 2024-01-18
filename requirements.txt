@@ -2,3 +2,7 @@ sklearn
 matplotlib
 sentence-transformers
 jupyter
+numpy
+openai
+torch
+scikit-learn

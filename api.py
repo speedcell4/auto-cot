@@ -1,5 +1,7 @@
 import argparse
+
 from utils import *
+
 
 def cot(method, question):
     args = parse_arguments()
@@ -52,27 +54,34 @@ def cot(method, question):
         print(pred)
         print('*****************************')
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Zero-shot-CoT")
 
     parser.add_argument("--max_num_worker", type=int, default=0, help="maximum number of workers for dataloader")
     parser.add_argument(
-        "--model", type=str, default="gpt3-xl", help="model used for decoding. Note that 'gpt3' are the smallest models."
+        "--model", type=str, default="gpt3-xl",
+        help="model used for decoding. Note that 'gpt3' are the smallest models."
     )
     parser.add_argument(
-        "--method", type=str, default="auto_cot", choices=["zero_shot", "zero_shot_cot", "few_shot", "few_shot_cot", "auto_cot"], help="method"
+        "--method", type=str, default="auto_cot",
+        choices=["zero_shot", "zero_shot_cot", "few_shot", "few_shot_cot", "auto_cot"], help="method"
     )
     parser.add_argument(
-        "--cot_trigger_no", type=int, default=1, help="A trigger sentence that elicits a model to execute chain of thought"
+        "--cot_trigger_no", type=int, default=1,
+        help="A trigger sentence that elicits a model to execute chain of thought"
     )
     parser.add_argument(
-        "--max_length_cot", type=int, default=256, help="maximum length of output tokens by model for reasoning extraction"
+        "--max_length_cot", type=int, default=256,
+        help="maximum length of output tokens by model for reasoning extraction"
     )
     parser.add_argument(
-        "--max_length_direct", type=int, default=32, help="maximum length of output tokens by model for answer extraction"
+        "--max_length_direct", type=int, default=32,
+        help="maximum length of output tokens by model for answer extraction"
     )
     parser.add_argument(
-        "--limit_dataset_size", type=int, default=0, help="whether to limit test dataset size. if 0, the dataset size is unlimited and we use all the samples in the dataset for testing."
+        "--limit_dataset_size", type=int, default=0,
+        help="whether to limit test dataset size. if 0, the dataset size is unlimited and we use all the samples in the dataset for testing."
     )
     parser.add_argument(
         "--api_time_interval", type=float, default=1.0, help=""

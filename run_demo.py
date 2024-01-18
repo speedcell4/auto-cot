@@ -1,11 +1,13 @@
+import argparse
+import json
 import random
+
+import matplotlib.pyplot as plt
+import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-import numpy as np
-import json
-import matplotlib.pyplot as plt
-import argparse
+
 from utils import fix_seed
 
 
@@ -13,7 +15,11 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Zero-shot-CoT")
     parser.add_argument(
         "--task", type=str, default="multiarith",
-        choices=["aqua", "gsm8k", "commonsensqa", "addsub", "multiarith", "strategyqa", "svamp", "singleeq", "coin_flip", "last_letters"], help="dataset used for experiment"
+        choices=[
+            "aqua", "gsm8k", "commonsensqa", "addsub", "multiarith",
+            "strategyqa", "svamp", "singleeq", "coin_flip", "last_letters",
+        ],
+        help="dataset used for experiment",
     )
     parser.add_argument(
         "--max_ra_len", type=int, default=5, help="maximum number of reasoning chains"
@@ -37,6 +43,7 @@ def parse_arguments():
     )
     args = parser.parse_args()
     return args
+
 
 def main():
     args = parse_arguments()
@@ -112,7 +119,7 @@ def main():
     demos = []
 
     for i in range(len(clustered_dists)):
-        print("Cluster ", i+1)
+        print("Cluster ", i + 1)
         tmp = list(map(list, zip(range(len(clustered_dists[i])), clustered_dists[i])))
         top_min_dist = sorted(tmp, key=lambda x: x[1], reverse=False)
         if not args.sampling == "center":
@@ -123,9 +130,11 @@ def main():
             c_pred_ans = pred_ans[clustered_idx[i][min_idx]].strip()
 
             if len(question[clustered_idx[i][min_idx]].strip().split()) <= 60 \
-                and len(c_rationale.replace("\n\n", "\n").split("\n")) <= max_ra_len and c_rationale[-1] == "." and c_pred_ans != "":
+                    and len(c_rationale.replace("\n\n", "\n").split("\n")) <= max_ra_len and c_rationale[
+                -1] == "." and c_pred_ans != "":
                 if args.task in ["gsm8k", "multiarith", "singleeq", "addsub", "svamp"]:
-                    if not (c_pred_ans.strip() in c_rationale.split(".")[-2] or c_pred_ans.strip() in c_rationale.split()[-10:]):
+                    if not (c_pred_ans.strip() in c_rationale.split(".")[-2] or
+                            c_pred_ans.strip() in c_rationale.split()[-10:]):
                         continue
                 c_question = question[clustered_idx[i][min_idx]]
                 c_rationale = c_rationale.replace("\n\n", "\n").replace("\n", " ").strip()
@@ -159,13 +168,14 @@ def main():
     centers = pca_model.transform(clustering_model.cluster_centers_)
 
     plt.scatter(x=transformed[:, 0], y=transformed[:, 1], c=y_km, s=50, cmap=plt.cm.Paired, alpha=0.4)
-    plt.scatter(centers[:, 0],centers[:, 1],
-            s=250, marker='*', label='centroids',
-            edgecolor='black',
-           c=np.arange(0,num_clusters),cmap=plt.cm.Paired,)
+    plt.scatter(centers[:, 0], centers[:, 1],
+                s=250, marker='*', label='centroids',
+                edgecolor='black',
+                c=np.arange(0, num_clusters), cmap=plt.cm.Paired, )
     plt.xticks([])
     plt.yticks([])
-    plt.savefig(save_file+".png", dpi=600)
+    plt.savefig(save_file + ".png", dpi=600)
+
 
 if __name__ == "__main__":
     main()
